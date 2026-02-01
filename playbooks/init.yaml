@@ -124,6 +124,7 @@
     - name: coredns を起動する
       community.docker.docker_compose_v2:
         project_src: /opt/svc/coredns
+        state: restarted
       register: output
 
     - name: coredns を起動した結果を表示する
@@ -135,7 +136,7 @@
         project_src: /opt/svc/coredns
       register: output
 
-    - name: coredns においてdocker compose up を再度実行した結果を表示する
+    - name: coredns において docker compose up を再度実行した結果を表示する
       ansible.builtin.debug:
         var: output
 

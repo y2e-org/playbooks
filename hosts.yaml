@@ -1,0 +1,6 @@
+all:
+  hosts:
+    nrt1csh1.tun.y2e.org:
+      ansible_host: 100.75.167.92
+      ansible_connection: ssh
+      ansible_ssh_user: root
