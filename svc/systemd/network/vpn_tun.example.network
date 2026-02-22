@@ -1,5 +1,5 @@
 [Match]
-Name=vpn_opsgate
+Name=vpn_tun
 
 [Network]
 Address=192.168.30.218/24
