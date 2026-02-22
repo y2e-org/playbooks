@@ -1,0 +1,143 @@
+- name: 基本設定
+  hosts: "csh"
+  become: yes
+  tasks:
+    - name: すべてのパッケージを最新にする
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+    - name: 必要なパッケージをインストールする
+      ansible.builtin.apt:
+        name:
+          - aria2
+          - wget
+          - curl
+          - keepalived
+        state: present
+
+- name: keepalived で csh 向け vip を設定する
+  hosts: "csh"
+  become: yes
+  vars:
+    vip_address: 192.168.30.100/24
+    base_priority: 200
+    priority_step: 10
+  handlers:
+    - name: Restart keepalived
+      service:
+        name: keepalived
+        state: restarted
+  tasks:
+    - name: hosts.yaml に記述されている順番で VRRP の priority を計算する
+      set_fact:
+        node_priority: "{{ base_priority - (groups['csh'].index(inventory_hostname) * priority_step) }}"
+    
+    - name: keepalived 向け config を生成して配置する
+      template:
+        src: ../svc/keepalived/keepalived.conf.j2
+        dest: /etc/keepalived/keepalived.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart keepalived
+
+- name: Docker で構成される各サービスを配置
+  hosts: "csh"
+  become: yes
+  tasks:
+    - name: サービス定義ファイルを配置する
+      ansible.builtin.copy:
+        src: ../svc
+        dest: /opt/
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: 53/udp の使用状況を確認する
+      ansible.builtin.command: ss -Hlun sport = :53
+      register: udp53_listeners
+      changed_when: false
+      failed_when: false
+
+    - name: 53/udp が空なら systemd-resolved を一時的に有効化して起動する
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        enabled: yes
+        state: started
+      when:
+        - (udp53_listeners.stdout | trim) == ""
+
+    - name: /etc/resolv.conf を一旦削除する（symlink 対策）
+      ansible.builtin.file:
+        path: /etc/resolv.conf
+        state: absent
+        force: yes
+      when:
+        - (udp53_listeners.stdout | trim) == ""
+
+    - name: /etc/resolv.conf を nameserver 1.1.1.1 に向ける
+      ansible.builtin.copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver 1.1.1.1
+        owner: root
+        group: root
+        mode: '0644'
+      when:
+        - (udp53_listeners.stdout | trim) == ""
+
+    - name: coredns のイメージを pull する
+      community.docker.docker_compose_v2_pull:
+        project_src: /opt/svc/coredns
+
+    - name: chrony を起動する
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/chrony
+      register: output
+
+- name: スタブリゾルバを無効化して coredns で名前解決する
+  hosts: "csh"
+  become: yes
+  tasks:
+    - name: systemd-resolved を無効化し、停止する
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        enabled: no
+        state: stopped
+    
+    - name: coredns が起動中か確認する
+      ansible.builtin.command: docker compose ps --status running -q
+      args:
+        chdir: /opt/svc/coredns
+      register: coredns_running
+      changed_when: false
+      failed_when: false
+
+    - name: coredns を再起動する（すでに起動している場合）
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/coredns
+        state: restarted
+      when:
+        - (coredns_running.stdout | trim) != ""
+
+    - name: coredns を起動する（まだ起動していない場合）
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/coredns
+        state: present
+      when:
+        - (coredns_running.stdout | trim) == ""
+
+    - name: /etc/resolv.conf にシンボリックリンクがあれば削除する
+      ansible.builtin.file:
+        path: /etc/resolv.conf
+        state: absent
+        force: yes
+
+    - name: キャッシュ DNS サーバの宛先を 127.0.0.1 (CoreDNS) に向ける
+      ansible.builtin.copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver 127.0.0.1
+        owner: root
+        group: root
+        mode: '0644'
