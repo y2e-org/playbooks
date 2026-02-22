@@ -1,0 +1,12 @@
+vrrp_instance csh {
+    state BACKUP
+    interface {{ keepalived_interface }}
+    virtual_router_id 30
+    priority {{ node_priority }}
+    advert_int 1
+    nopreempt
+
+    virtual_ipaddress {
+        {{ vip_address }}
+    }
+}
