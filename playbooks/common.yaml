@@ -94,6 +94,15 @@
       community.docker.docker_compose_v2:
         project_src: /opt/svc/chrony
       register: output
+    
+    - name: tftpd のイメージを pull する
+      community.docker.docker_compose_v2_pull:
+        project_src: /opt/svc/tftpd
+
+    - name: tftpd を起動する
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/tftpd
+      register: output
 
 - name: スタブリゾルバを無効化して coredns で名前解決する
   hosts: "csh"
