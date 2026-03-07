@@ -1,0 +1,9 @@
+services:
+  coredns:
+    image: pghalliday/tftp
+    restart: always
+    ports:
+      - '69:69'
+      - '69:69/udp'
+    volumes:
+      - './data:/var/tftpboot'
