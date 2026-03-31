@@ -5,8 +5,10 @@
     whoami
     prometheus
     
-    hosts /etc/coredns/hosts {
-         fallthrough
+    hosts {
+        import /etc/coredns/open.y2e.org.hosts
+        import /etc/coredns/tun.y2e.org.hosts
+        fallthrough
     }
     
     forward . 1.1.1.1
