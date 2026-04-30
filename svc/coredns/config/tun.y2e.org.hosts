@@ -4,10 +4,10 @@
 192.168.30.102  ttj1csh1.tun.y2e.org
 192.168.30.103  hnd3csh1.tun.y2e.org
 192.168.30.195  nt51.tun.y2e.org
-192.168.30.196  freebsd.tun.y2e.org
-192.168.30.197  pear.tun.y2e.org
+192.168.30.196  hnd1pve2.tun.y2e.org
+192.168.30.197  ttj1pve1.tun.y2e.org
 192.168.30.198  bway.tun.y2e.org
-192.168.30.199  melon.tun.y2e.org
+192.168.30.199  hnd3pve1.tun.y2e.org
 192.168.30.200  berry.tun.y2e.org
 192.168.30.201  nrt1pow1.tun.y2e.org
 192.168.30.202  ibr1wstep1.tun.y2e.org
@@ -41,7 +41,6 @@
 192.168.30.230  nrt1wbr1.tun.y2e.org
 192.168.30.231  ibr1gw1.tun.y2e.org
 192.168.30.232  hnd1con1.tun.y2e.org
-192.168.30.233  haiku.tun.y2e.org
 192.168.30.234  ttj1pbk1.tun.y2e.org
 192.168.30.235  hnd1pbk1.tun.y2e.org
 192.168.30.236  ibr1gw2.tun.y2e.org
@@ -60,6 +59,6 @@
 192.168.30.249  hnd1gw1.tun.y2e.org
 192.168.30.250  nrt1tsh1.tun.y2e.org
 192.168.30.251  ttj1gw1.tun.y2e.org
-192.168.30.252  ttj1vo1.tun.y2e.org # previously used in 192.168.30.13, not applied
+192.168.30.252  ttj1vo1.tun.y2e.org
 192.168.30.253  maple.tun.y2e.org
 192.168.30.254  beer.tun.y2e.org
