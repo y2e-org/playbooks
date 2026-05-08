@@ -6,7 +6,7 @@
     prometheus
     
     hosts {
-        import /etc/coredns/open.y2e.org.hosts
+        import /etc/coredns/ivn.y2e.org.hosts
         import /etc/coredns/tun.y2e.org.hosts
         fallthrough
     }
