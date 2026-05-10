@@ -1,21 +1,33 @@
 all:
   children:
-    csh:
+    sh:
       hosts:
-        nrt1csh1.tun.y2e.org:
-          ansible_host: 192.168.30.101
+        nrt1sh1.tun.y2e.org:
+          ansible_host: 192.168.30.218
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth1
 
-        ttj1csh1.tun.y2e.org:
-          ansible_host: 192.168.30.102
+        ttj1sh1.tun.y2e.org:
+          ansible_host: 192.168.30.215
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth1
 
-        hnd3csh1.tun.y2e.org:
-          ansible_host: 192.168.30.103
+        hnd3sh1.tun.y2e.org:
+          ansible_host: 192.168.30.223
+          ansible_connection: ssh
+          ansible_ssh_user: root
+          keepalived_interface: tap_tun
+        
+        hnd1sh1.tun.y2e.org:
+          ansible_host: 192.168.30.212
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth1
+
+        ibr1sh1.tun.y2e.org:
+          ansible_host: 192.168.30.219
+          ansible_connection: ssh
+          ansible_ssh_user: root
+          keepalived_interface: eth2

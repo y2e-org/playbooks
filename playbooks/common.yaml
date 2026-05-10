@@ -1,5 +1,5 @@
 - name: 基本設定
-  hosts: "csh"
+  hosts: "sh"
   become: yes
   tasks:
     - name: すべてのパッケージを最新にする
@@ -15,8 +15,8 @@
           - keepalived
         state: present
 
-- name: keepalived で csh 向け vip を設定する
-  hosts: "csh"
+- name: keepalived で sh 向け vip を設定する
+  hosts: "sh"
   become: yes
   vars:
     vip_address: 192.168.30.100/24
@@ -30,7 +30,7 @@
   tasks:
     - name: hosts.yaml に記述されている順番で VRRP の priority を計算する
       set_fact:
-        node_priority: "{{ base_priority - (groups['csh'].index(inventory_hostname) * priority_step) }}"
+        node_priority: "{{ base_priority - (groups['sh'].index(inventory_hostname) * priority_step) }}"
     
     - name: keepalived 向け config を生成して配置する
       template:
@@ -42,7 +42,7 @@
       notify: Restart keepalived
 
 - name: Docker で構成される各サービスを配置
-  hosts: "csh"
+  hosts: "sh"
   become: yes
   tasks:
     - name: サービス定義ファイルを配置する
@@ -105,7 +105,7 @@
       register: output
 
 - name: スタブリゾルバを無効化して coredns で名前解決する
-  hosts: "csh"
+  hosts: "sh"
   become: yes
   tasks:
     - name: systemd-resolved を無効化し、停止する
