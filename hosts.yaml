@@ -1,5 +1,17 @@
 all:
   children:
+    dhcp:
+      vars:
+        kea_dhcp4_enable: true
+        kea_dhcp4_subnet: 192.168.30.0/24
+        kea_dhcp4_pool: 192.168.30.10 - 192.168.30.50
+        kea_dhcp4_router: 192.168.30.1
+        kea_dhcp4_dns_servers:
+          - 192.168.30.100
+      hosts:
+        nrt1sh1.tun.y2e.org:
+        ttj1sh1.tun.y2e.org:
+
     sh:
       hosts:
         nrt1sh1.tun.y2e.org:

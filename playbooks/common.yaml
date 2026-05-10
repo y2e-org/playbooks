@@ -105,6 +105,70 @@
         project_src: /opt/svc/tftpd
       register: output
 
+- name: Kea DHCPv4 を hot-standby で構成する
+  hosts: "sh"
+  become: yes
+  handlers:
+    - name: Restart kea-dhcp4
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/kea
+        state: restarted
+  tasks:
+    - name: Kea DHCPv4 の有効化条件を確認する
+      ansible.builtin.assert:
+        that:
+          - groups['dhcp'] | length == 2
+          - kea_dhcp4_subnet is defined
+          - kea_dhcp4_pool is defined
+          - kea_dhcp4_router is defined
+          - hostvars[groups['dhcp'][0]].ansible_host is defined
+          - hostvars[groups['dhcp'][1]].ansible_host is defined
+        fail_msg: >-
+          Kea DHCPv4 hot-standby を有効にするには dhcp グループを 2 台で定義し、
+          kea_dhcp4_subnet / kea_dhcp4_pool / kea_dhcp4_router を設定してください。
+      when:
+        - kea_dhcp4_enable | default(false) | bool
+        - inventory_hostname in groups.get('dhcp', [])
+
+    - name: Kea DHCPv4 設定を配置する
+      ansible.builtin.template:
+        src: ../svc/kea/config/kea-dhcp4.conf.j2
+        dest: /opt/svc/kea/config/kea-dhcp4.conf
+        owner: root
+        group: root
+        mode: '0644'
+      when:
+        - kea_dhcp4_enable | default(false) | bool
+        - inventory_hostname in groups.get('dhcp', [])
+      notify: Restart kea-dhcp4
+
+    - name: Kea DHCPv4 のイメージを pull する
+      community.docker.docker_compose_v2_pull:
+        project_src: /opt/svc/kea
+      when:
+        - kea_dhcp4_enable | default(false) | bool
+        - inventory_hostname in groups.get('dhcp', [])
+
+    - name: Kea DHCPv4 が起動中か確認する
+      ansible.builtin.command: docker compose ps --status running -q
+      args:
+        chdir: /opt/svc/kea
+      register: kea_dhcp4_running
+      changed_when: false
+      failed_when: false
+      when:
+        - kea_dhcp4_enable | default(false) | bool
+        - inventory_hostname in groups.get('dhcp', [])
+
+    - name: Kea DHCPv4 を起動する
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/kea
+        state: present
+      when:
+        - kea_dhcp4_enable | default(false) | bool
+        - inventory_hostname in groups.get('dhcp', [])
+        - (kea_dhcp4_running.stdout | trim) == ""
+
 - name: スタブリゾルバを無効化して coredns で名前解決する
   hosts: "sh"
   become: yes

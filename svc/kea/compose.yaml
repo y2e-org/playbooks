@@ -1,0 +1,8 @@
+services:
+  kea-dhcp4:
+    image: ${KEA_DHCP4_IMAGE:-docker.cloudsmith.io/isc/docker/kea-dhcp4:latest}
+    restart: always
+    network_mode: host
+    volumes:
+      - './config:/etc/kea'
+      - './data:/var/lib/kea'

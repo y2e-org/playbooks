@@ -1,0 +1,104 @@
+{
+  "Dhcp4": {
+    "interfaces-config": {
+      "interfaces": [ "{{ kea_dhcp4_interface | default(keepalived_interface) }}" ]
+    },
+    "control-sockets": [
+      {
+        "socket-type": "http",
+        "socket-address": "{{ kea_dhcp4_control_address | default('127.0.0.1') }}",
+        "socket-port": {{ kea_dhcp4_control_port | default(8010) }}
+      }
+    ],
+    "lease-database": {
+      "type": "memfile",
+      "name": "/var/lib/kea/kea-leases4.csv",
+      "persist": true,
+      "lfc-interval": {{ kea_dhcp4_lfc_interval | default(3600) }}
+    },
+    "valid-lifetime": {{ kea_dhcp4_valid_lifetime | default(3600) }},
+    "renew-timer": {{ kea_dhcp4_renew_timer | default(900) }},
+    "rebind-timer": {{ kea_dhcp4_rebind_timer | default(1800) }},
+    "store-extended-info": true,
+    "hooks-libraries": [
+      {
+        "library": "libdhcp_lease_cmds.so"
+      },
+      {
+        "library": "libdhcp_ha.so",
+        "parameters": {
+          "high-availability": [
+            {
+              "this-server-name": "{{ inventory_hostname }}",
+              "mode": "hot-standby",
+              "heartbeat-delay": {{ kea_dhcp4_heartbeat_delay | default(10000) }},
+              "max-response-delay": {{ kea_dhcp4_max_response_delay | default(60000) }},
+              "max-ack-delay": {{ kea_dhcp4_max_ack_delay | default(5000) }},
+              "max-unacked-clients": {{ kea_dhcp4_max_unacked_clients | default(5) }},
+              "max-rejected-lease-updates": {{ kea_dhcp4_max_rejected_lease_updates | default(10) }},
+              "multi-threading": {
+                "enable-multi-threading": true,
+                "http-dedicated-listener": true,
+                "http-listener-threads": 0,
+                "http-client-threads": 0
+              },
+              "peers": [
+                {
+                  "name": "{{ groups['dhcp'][0] }}",
+                  "url": "http://{{ hostvars[groups['dhcp'][0]].ansible_host }}:{{ kea_dhcp4_ha_port | default(8001) }}/",
+                  "role": "primary",
+                  "auto-failover": true
+                },
+                {
+                  "name": "{{ groups['dhcp'][1] }}",
+                  "url": "http://{{ hostvars[groups['dhcp'][1]].ansible_host }}:{{ kea_dhcp4_ha_port | default(8001) }}/",
+                  "role": "standby",
+                  "auto-failover": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "subnet4": [
+      {
+        "id": {{ kea_dhcp4_subnet_id | default(1) }},
+        "subnet": "{{ kea_dhcp4_subnet }}",
+        "interface": "{{ kea_dhcp4_interface | default(keepalived_interface) }}",
+        "pools": [
+          {
+            "pool": "{{ kea_dhcp4_pool }}"
+          }
+        ],
+        "option-data": [
+          {
+            "name": "routers",
+            "data": "{{ kea_dhcp4_router }}"
+          }{% if kea_dhcp4_dns_servers is defined %},
+          {
+            "name": "domain-name-servers",
+            "data": "{{ kea_dhcp4_dns_servers | join(', ') }}"
+          }{% endif %}{% if kea_dhcp4_domain_name is defined %},
+          {
+            "name": "domain-name",
+            "data": "{{ kea_dhcp4_domain_name }}"
+          }{% endif %}
+        ]{% if kea_dhcp4_next_server is defined %},
+        "next-server": "{{ kea_dhcp4_next_server }}"{% endif %}{% if kea_dhcp4_boot_file_name is defined %},
+        "boot-file-name": "{{ kea_dhcp4_boot_file_name }}"{% endif %}
+      }
+    ],
+    "loggers": [
+      {
+        "name": "kea-dhcp4",
+        "output_options": [
+          {
+            "output": "{{ kea_dhcp4_log_output | default('/var/log/kea/kea-dhcp4.log') }}"
+          }
+        ],
+        "severity": "{{ kea_dhcp4_log_severity | default('INFO') }}"
+      }
+    ]
+  }
+}
