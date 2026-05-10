@@ -64,6 +64,7 @@
         name: systemd-resolved
         enabled: yes
         state: started
+      failed_when: false
       when:
         - (udp53_listeners.stdout | trim) == ""
 
