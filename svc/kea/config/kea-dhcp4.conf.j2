@@ -61,11 +61,58 @@
         }
       }
     ],
+{% if kea_dhcp4_pxe_next_server is defined or kea_dhcp4_http_boot_url_base is defined %}
+    "client-classes": [
+      {
+        "name": "httpboot_uefi_x64",
+        "test": "substring(option[60].hex,0,10) == 'HTTPClient' and (option[93].hex == 0x0007 or option[93].hex == 0x0009)",
+        "boot-file-name": "{{ kea_dhcp4_http_boot_uefi_x64_boot_file_name | default(((kea_dhcp4_http_boot_url_base if kea_dhcp4_http_boot_url_base is defined else 'http://' ~ kea_dhcp4_pxe_next_server)) ~ '/netboot.xyz.efi') }}",
+        "option-data": [
+          {
+            "name": "vendor-class-identifier",
+            "data": "HTTPClient",
+            "always-send": true
+          }
+        ]
+      },
+      {
+        "name": "httpboot_uefi_arm64",
+        "test": "substring(option[60].hex,0,10) == 'HTTPClient' and option[93].hex == 0x000b",
+        "boot-file-name": "{{ kea_dhcp4_http_boot_uefi_arm64_boot_file_name | default(((kea_dhcp4_http_boot_url_base if kea_dhcp4_http_boot_url_base is defined else 'http://' ~ kea_dhcp4_pxe_next_server)) ~ '/netboot.xyz-arm64.efi') }}",
+        "option-data": [
+          {
+            "name": "vendor-class-identifier",
+            "data": "HTTPClient",
+            "always-send": true
+          }
+        ]
+      }{% if kea_dhcp4_pxe_next_server is defined %},
+      {
+        "name": "pxe_uefi_x64",
+        "test": "option[93].hex == 0x0007 or option[93].hex == 0x0009",
+        "next-server": "{{ kea_dhcp4_pxe_next_server }}",
+        "boot-file-name": "{{ kea_dhcp4_pxe_uefi_x64_boot_file_name | default('netboot.xyz-snponly.efi') }}"
+      },
+      {
+        "name": "pxe_uefi_arm64",
+        "test": "option[93].hex == 0x000b",
+        "next-server": "{{ kea_dhcp4_pxe_next_server }}",
+        "boot-file-name": "{{ kea_dhcp4_pxe_uefi_arm64_boot_file_name | default('netboot.xyz-arm64-snponly.efi') }}"
+      },
+      {
+        "name": "pxe_bios",
+        "test": "substring(option[60].hex,0,9) == 'PXEClient' and not member('pxe_uefi_x64') and not member('pxe_uefi_arm64')",
+        "next-server": "{{ kea_dhcp4_pxe_next_server }}",
+        "boot-file-name": "{{ kea_dhcp4_pxe_bios_boot_file_name | default('netboot.xyz.kpxe') }}"
+      }{% endif %}
+    ],
+{% endif %}
     "subnet4": [
       {
         "id": {{ kea_dhcp4_subnet_id | default(1) }},
         "subnet": "{{ kea_dhcp4_subnet }}",
-        "interface": "{{ kea_dhcp4_interface | default(keepalived_interface) }}",
+        "interface": "{{ kea_dhcp4_interface | default(keepalived_interface) }}"{% if kea_dhcp4_match_client_id is defined %},
+        "match-client-id": {{ (kea_dhcp4_match_client_id | bool) | ternary('true', 'false') }}{% endif %},
         "pools": [
           {
             "pool": "{{ kea_dhcp4_pool }}"

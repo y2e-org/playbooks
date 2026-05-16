@@ -96,14 +96,50 @@
         project_src: /opt/svc/chrony
       register: output
     
-    - name: tftpd のイメージを pull する
-      community.docker.docker_compose_v2_pull:
+    - name: tftpd をビルドする
+      community.docker.docker_compose_v2:
         project_src: /opt/svc/tftpd
+        state: present
+        build: always
+
+    - name: netboot.xyz 配布用ディレクトリを作成する
+      ansible.builtin.file:
+        path: /opt/svc/tftpd/data
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      when:
+        - (tftpd_netboot_xyz_enable | default(false) | bool) or (httpboot_netboot_xyz_enable | default(false) | bool)
+
+    - name: netboot.xyz のブートローダを配置する
+      ansible.builtin.get_url:
+        url: "{{ (tftpd_netboot_xyz_download_base_url | default('https://boot.netboot.xyz/ipxe')) ~ '/' ~ item }}"
+        dest: "/opt/svc/tftpd/data/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ tftpd_netboot_xyz_bootloaders | default(['netboot.xyz.kpxe', 'netboot.xyz.efi', 'netboot.xyz-arm64.efi', 'netboot.xyz-snponly.efi', 'netboot.xyz-arm64-snponly.efi']) }}"
+      when:
+        - (tftpd_netboot_xyz_enable | default(false) | bool) or (httpboot_netboot_xyz_enable | default(false) | bool)
 
     - name: tftpd を起動する
       community.docker.docker_compose_v2:
         project_src: /opt/svc/tftpd
       register: output
+
+    - name: httpboot のイメージを pull する
+      community.docker.docker_compose_v2_pull:
+        project_src: /opt/svc/httpboot
+      when:
+        - httpboot_netboot_xyz_enable | default(false) | bool
+
+    - name: httpboot を起動する
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/httpboot
+      register: output
+      when:
+        - httpboot_netboot_xyz_enable | default(false) | bool
 
 - name: Kea DHCPv4 を hot-standby で構成する
   hosts: "sh"

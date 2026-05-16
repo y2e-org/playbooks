@@ -1,0 +1,8 @@
+services:
+  httpboot:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - '../tftpd/data:/usr/share/nginx/html:ro'
