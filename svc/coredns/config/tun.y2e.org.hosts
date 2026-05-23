@@ -1,5 +1,6 @@
 192.168.30.1    kix1core1.tun.y2e.org
 192.168.30.100  csh.tun.y2e.org
+192.168.30.194  nrt1vo3.tun.y2e.org
 192.168.30.195  nt51.tun.y2e.org
 192.168.30.196  hnd1pve2.tun.y2e.org
 192.168.30.197  ttj1pve1.tun.y2e.org
@@ -13,6 +14,7 @@
 192.168.30.205  hnd1vo1.tun.y2e.org
 192.168.30.206  izo1gw1.tun.y2e.org
 192.168.30.207  nrt1gw1.tun.y2e.org
+192.168.30.208  nrt1tel1.tun.y2e.org
 192.168.30.209  nrt1ws1.tun.y2e.org
 192.168.30.210  ttj1pve2.tun.y2e.org
 192.168.30.211  nrt1kwo2.tun.y2e.org
