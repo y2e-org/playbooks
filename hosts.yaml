@@ -25,27 +25,32 @@ all:
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth1
+          keepalived_interface_ivn: eth2
 
         ttj1sh1.tun.y2e.org:
           ansible_host: 192.168.30.215
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth1
+          keepalived_interface_ivn: dummy
 
         hnd3sh1.tun.y2e.org:
           ansible_host: 192.168.30.223
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: tap_tun
+          keepalived_interface_ivn: dummy
         
         hnd1sh1.tun.y2e.org:
           ansible_host: 192.168.30.212
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth1
+          keepalived_interface_ivn: eth2
 
         ibr1sh1.tun.y2e.org:
           ansible_host: 192.168.30.219
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: eth2
+          keepalived_interface_ivn: dummy

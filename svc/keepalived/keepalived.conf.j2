@@ -10,3 +10,18 @@ vrrp_instance csh {
         {{ vip_address }}
     }
 }
+
+{% if keepalived_interface_ivn is defined and keepalived_interface_ivn in (ansible_facts.interfaces | default(ansible_interfaces | default([]))) %}
+vrrp_instance ivnsh {
+    state BACKUP
+    interface {{ keepalived_interface_ivn }}
+    virtual_router_id 31
+    priority {{ node_priority }}
+    advert_int 1
+    nopreempt
+
+    virtual_ipaddress {
+        {{ vip_address_ivn }}
+    }
+}
+{% endif %}

@@ -20,6 +20,7 @@
   become: yes
   vars:
     vip_address: 192.168.30.100/24
+    vip_address_ivn: 192.168.31.100/24
     base_priority: 200
     priority_step: 10
   handlers:
