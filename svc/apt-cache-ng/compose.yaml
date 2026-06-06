@@ -1,0 +1,7 @@
+services:
+  apt-cache-ng:
+    image: sameersbn/apt-cacher-ng
+    restart: always
+    network_mode: host
+    volumes:
+      - './cache:/var/cache/apt-cacher-ng'

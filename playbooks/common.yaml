@@ -142,6 +142,15 @@
       when:
         - httpboot_netboot_xyz_enable | default(false) | bool
 
+    - name: apt-cache-ng のイメージを pull する
+      community.docker.docker_compose_v2_pull:
+        project_src: /opt/svc/apt-cache-ng
+
+    - name: apt-cache-ng を起動する
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/apt-cache-ng
+      register: output
+
 - name: Kea DHCPv4 を hot-standby で構成する
   hosts: "sh"
   become: yes
