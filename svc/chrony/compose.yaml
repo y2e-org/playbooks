@@ -3,5 +3,7 @@ services:
     image: dockurr/chrony
     environment:
       NTP_SERVERS: "time.cloudflare.com"
-    network_mode: host
+    ports:
+      - "192.168.31.100:123:123/udp"
+      - "192.168.30.100:123:123/udp"
     restart: always
