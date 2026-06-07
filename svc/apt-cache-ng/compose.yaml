@@ -2,6 +2,7 @@ services:
   apt-cache-ng:
     image: sameersbn/apt-cacher-ng
     restart: always
-    network_mode: host
+    ports:
+      - "3142:3142"
     volumes:
       - './cache:/var/cache/apt-cacher-ng'
