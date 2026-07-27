@@ -3,7 +3,7 @@
 192.168.31.3    adm-nrt1-hgw00.ivn.y2e.org
 192.168.31.4    adm-hnd1-hgw00.ivn.y2e.org
 192.168.31.5    y2e-hnd1-dworker00.ivn.y2e.org
-192.168.31.6    ppp-ibr1-win00.ivn.y2e.org
+192.168.31.6    ppp-ibr1-wstep00.ivn.y2e.org
 192.168.31.7    adm-nrt1-sync2400.ivn.y2e.org
 192.168.31.8    y2e-nrt1-gate00.ivn.y2e.org
 192.168.31.9    ykn-tokyo-gate00.ivn.y2e.org
@@ -11,4 +11,5 @@
 192.168.31.11   adm-hnd1-proxy00.ivn.y2e.org
 192.168.31.12   kde-tokyo-gate00.ivn.y2e.org
 192.168.31.13   adm-hnd1-pve00.ivn.y2e.org
+192.168.31.14   adm-nrt1-wstep00.ivn.y2e.org
 192.168.31.100  adm-vip-prov00.ivn.y2e.org
