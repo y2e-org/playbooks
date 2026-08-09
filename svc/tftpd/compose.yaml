@@ -1,7 +1,0 @@
-services:
-  coredns:
-    build: .
-    restart: always
-    network_mode: host
-    volumes:
-      - './data:/var/tftpboot'
