@@ -3,21 +3,6 @@ all:
     tftpd_netboot_xyz_enable: true
     httpboot_netboot_xyz_enable: true
   children:
-    dhcp:
-      vars:
-        kea_dhcp4_enable: true
-        kea_dhcp4_subnet: 192.168.30.0/24
-        kea_dhcp4_pool: 192.168.30.10 - 192.168.30.50
-        kea_dhcp4_router: 192.168.30.1
-        kea_dhcp4_pxe_next_server: 192.168.30.215
-        kea_dhcp4_http_boot_url_base: http://192.168.30.215
-        kea_dhcp4_match_client_id: false
-        kea_dhcp4_dns_servers:
-          - 192.168.30.100
-      hosts:
-        nrt1sh1.tun.y2e.org:
-        ttj1sh1.tun.y2e.org:
-
     sh:
       hosts:
         nrt1sh1.tun.y2e.org:
@@ -39,18 +24,4 @@ all:
           ansible_connection: ssh
           ansible_ssh_user: root
           keepalived_interface: tap_tun
-          keepalived_interface_ivn: dummy
-        
-        hnd1sh1.tun.y2e.org:
-          ansible_host: 192.168.30.212
-          ansible_connection: ssh
-          ansible_ssh_user: root
-          keepalived_interface: eth1
-          keepalived_interface_ivn: eth2
-
-        ibr1sh1.tun.y2e.org:
-          ansible_host: 192.168.30.219
-          ansible_connection: ssh
-          ansible_ssh_user: root
-          keepalived_interface: eth2
           keepalived_interface_ivn: dummy
