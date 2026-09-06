@@ -3,5 +3,5 @@
 Ansible Playbook
 
 ```
-$ ansible-playbook playbooks/common.yaml
+$ ansible-playbook playbooks/<playbook>.yaml
 ```
