@@ -1,9 +1,10 @@
+---
 all:
   vars:
     tftpd_netboot_xyz_enable: true
     httpboot_netboot_xyz_enable: true
   children:
-    sh:
+    tun.sh:
       hosts:
         nrt1sh1.tun.y2e.org:
           ansible_host: 192.168.30.218
@@ -25,3 +26,48 @@ all:
           ansible_ssh_user: root
           keepalived_interface: tap_tun
           keepalived_interface_ivn: dummy
+
+    sh:
+      hosts:
+        hnd2sh1.tail5b1c5.ts.net:
+          ansible_host: 100.76.111.80
+          ansible_ssh_user: yude
+          ansible_become: true
+        hnd3sh1.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        nrt1ls1.tail5b1c5.ts.net:
+          ansible_ssh_user: yude
+          ansible_become: true
+        kix1sh1.tail5b1c5.ts.net:
+          ansible_ssh_user: ubuntu
+          ansible_become: true
+          ansible_ssh_port: 22223
+        kix1sh2.tail5b1c5.ts.net:
+          ansible_ssh_user: ubuntu
+          ansible_become: true
+        hnd1ls1.tail5b1c5.ts.net:
+          ansible_ssh_user: yude
+          ansible_become: true
+        izo1sh1.tun.y2e.org:
+          ansible_ssh_user: yude
+          ansible_become: true
+        nrt1wat1.tun.y2e.org:
+          ansible_ssh_user: yude
+          ansible_become: true
+
+    hv:
+      hosts:
+        hnd1pve1.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        hnd1pve2.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        hnd1pve3.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        hnd3pve1.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        nrt1pve1.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        ttj1pve1.tail5b1c5.ts.net:
+          ansible_ssh_user: root
+        ttj1pve2.tail5b1c5.ts.net:
+          ansible_ssh_user: root
