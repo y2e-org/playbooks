@@ -31,7 +31,7 @@
   tasks:
     - name: hosts.yaml に記述されている順番で VRRP の priority を計算する
       set_fact:
-        node_priority: "{{ base_priority - (groups['sh'].index(inventory_hostname) * priority_step) }}"
+        node_priority: "{{ base_priority - (groups['tun.sh'].index(inventory_hostname) * priority_step) }}"
     
     - name: keepalived 向け config を生成して配置する
       template:
