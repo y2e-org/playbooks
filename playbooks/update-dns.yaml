@@ -1,0 +1,23 @@
+- name: CoreDNS の DNS エントリを更新する
+  hosts: "tun.sh"
+  become: yes
+  gather_facts: false
+  handlers:
+    - name: CoreDNS を再起動する
+      community.docker.docker_compose_v2:
+        project_src: /opt/svc/coredns
+        services:
+          - coredns
+        state: restarted
+  tasks:
+    - name: DNS エントリを配置する
+      ansible.builtin.copy:
+        src: "../svc/coredns/config/{{ item }}"
+        dest: "/opt/svc/coredns/config/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - ivn.y2e.org.hosts
+        - tun.y2e.org.hosts
+      notify: CoreDNS を再起動する
